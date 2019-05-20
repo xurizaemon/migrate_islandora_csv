@@ -122,65 +122,36 @@ process:
       bundle_key: vid
       bundle: subject
 
-#  _relators:
-#    -
-#      plugin: explode
-#      source: relators
-#      delimiter: '|'
-#    -
-#      plugin: str_replace
-#      regex: true
-#      search: '/.*=/'
-#      replace: ''
-#
-#  _relateds:
-#    -
-#      plugin: explode
-#      source: relators
-#      delimiter: '|'
-#    -
-#      plugin: str_replace
-#      regex: true
-#      search: '/=.*/'
-#      replace: ''
-#
-  _linked_agent_target_id:
-    -
-      plugin: explode
-      source: relators
-      delimiter: '|'
-    -
-      plugin: str_replace
-      regex: true
-      search: '/.*=/'
-      replace: ''
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      value_key: name
-      bundle_key: vid
-      bundle: person
-
-  _linked_agent_rel_type:
-    -
-      plugin: explode
-      source: relators
-      delimiter: '|'
-    -
-      plugin: str_replace
-      regex: true
-      search: '/=.*/'
-      replace: ''
-
-  # Complex fields can have their individual
-  # parts set independently.  Use / to denote
-  # you're working with a proerty of a field
-  # directly.
   field_linked_agent:
-    plugin: merge
-    source:
-      - '@_linked_agent/target_id'
-      - '@_linked_agent/rel_type'
+    plugin: sub_process
+    source: relators
+    process:
+      target_id:
+        -
+          plugin: explode
+          source: relators
+          delimiter: '|'
+        -
+          plugin: str_replace
+          regex: true
+          search: '/.*=/'
+          replace: ''
+        -
+          plugin: entity_generate
+          entity_type: taxonomy_term
+          value_key: name
+          bundle_key: vid
+          bundle: person
+      rel_type:
+        -
+          plugin: explode
+          source: relators
+          delimiter: '|'
+        -
+          plugin: str_replace
+          regex: true
+          search: '/=.*/'
+          replace: ''
 
 #  _dsvrelators:
 #    -
