@@ -122,57 +122,24 @@ process:
       bundle_key: vid
       bundle: subject
 
+  # With the dsvrelator process plugin, we can extract
+  # the subject name and rel_type, then pass to
+  # entity_generate.
   field_linked_agent:
-    plugin: sub_process
-    source: relators
-    process:
-      target_id:
-        -
-          plugin: explode
-          source: relators
-          delimiter: '|'
-        -
-          plugin: str_replace
-          regex: true
-          search: '/.*=/'
-          replace: ''
-        -
+    -
+      plugin: dsvrelator
+      source: relators
+    -
+      plugin: sub_process
+      process:
+        target_id:
           plugin: entity_generate
           entity_type: taxonomy_term
           value_key: name
           bundle_key: vid
-          bundle: person
-      rel_type:
-        -
-          plugin: explode
-          source: relators
-          delimiter: '|'
-        -
-          plugin: str_replace
-          regex: true
-          search: '/=.*/'
-          replace: ''
-
-#  _dsvrelators:
-#    -
-#      plugin: explode
-#      source: relators
-#      delimiter: '|'
-#    -
-#      plugin: explode
-#      delimiter: '='
-#    -
-#      plugin: dsvrelations
-#      source: _relators
-#      dsv_key: rel_type
-#      dsv_val: target_id
-
-#  _relations:
-#    -
-#      plugin: merge
-#      source:
-#        - '@relators'
-#        - '@relateds'
+          bundle: subject
+          source: target_name
+        rel_type: rel_type
 
 # We're making nodes
 destination:
