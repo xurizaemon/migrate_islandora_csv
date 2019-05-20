@@ -122,22 +122,86 @@ process:
       bundle_key: vid
       bundle: subject
 
+#  _relators:
+#    -
+#      plugin: explode
+#      source: relators
+#      delimiter: '|'
+#    -
+#      plugin: str_replace
+#      regex: true
+#      search: '/.*=/'
+#      replace: ''
+#
+#  _relateds:
+#    -
+#      plugin: explode
+#      source: relators
+#      delimiter: '|'
+#    -
+#      plugin: str_replace
+#      regex: true
+#      search: '/=.*/'
+#      replace: ''
+#
+  _linked_agent_target_id:
+    -
+      plugin: explode
+      source: relators
+      delimiter: '|'
+    -
+      plugin: str_replace
+      regex: true
+      search: '/.*=/'
+      replace: ''
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: person
+
+  _linked_agent_rel_type:
+    -
+      plugin: explode
+      source: relators
+      delimiter: '|'
+    -
+      plugin: str_replace
+      regex: true
+      search: '/=.*/'
+      replace: ''
+
   # Complex fields can have their individual
   # parts set independently.  Use / to denote
   # you're working with a proerty of a field
   # directly.
-  field_linked_agent/target_id:
-    plugin: entity_generate
-    source: photographer
-    entity_type: taxonomy_term
-    value_key: name
-    bundle_key: vid
-    bundle: person
+  field_linked_agent:
+    plugin: merge
+    source:
+      - '@_linked_agent/target_id'
+      - '@_linked_agent/rel_type'
 
-  # Hard-code the rel_type to photographer
-  # for all the names in the photographer
-  # column.
-  field_linked_agent/rel_type: constants/relator
+#  _dsvrelators:
+#    -
+#      plugin: explode
+#      source: relators
+#      delimiter: '|'
+#    -
+#      plugin: explode
+#      delimiter: '='
+#    -
+#      plugin: dsvrelations
+#      source: _relators
+#      dsv_key: rel_type
+#      dsv_val: target_id
+
+#  _relations:
+#    -
+#      plugin: merge
+#      source:
+#        - '@relators'
+#        - '@relateds'
 
 # We're making nodes
 destination:
