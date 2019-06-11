@@ -122,22 +122,24 @@ process:
       bundle_key: vid
       bundle: subject
 
-  # Complex fields can have their individual
-  # parts set independently.  Use / to denote
-  # you're working with a proerty of a field
-  # directly.
-  field_linked_agent/target_id:
-    plugin: entity_generate
-    source: photographer
-    entity_type: taxonomy_term
-    value_key: name
-    bundle_key: vid
-    bundle: person
-
-  # Hard-code the rel_type to photographer
-  # for all the names in the photographer
-  # column.
-  field_linked_agent/rel_type: constants/relator
+  # With the dsvrelator process plugin, we can extract
+  # the subject name and rel_type, then pass to
+  # entity_generate.
+  field_linked_agent:
+    -
+      plugin: dsvrelator
+      source: relators
+    -
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: entity_generate
+          entity_type: taxonomy_term
+          value_key: name
+          bundle_key: vid
+          bundle: subject
+          source: target_name
+        rel_type: rel_type
 
 # We're making nodes
 destination:
